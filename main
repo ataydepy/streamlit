@@ -1,0 +1,28 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import plotly.express as px
+from football_data import Player  
+
+st.title("Football Stats Dashboard")
+
+player_name = st.text_input("Enter player name:", "Lionel Messi")
+season = st.selectbox("Select season:", ["2023/2024", "2022/2023", "2021/2022"])
+
+if st.button("Show Stats"):
+    player = Player(player_name)
+    stats = player.stats(season=season)
+    df = pd.DataFrame(stats)
+    st.write(df)
+
+st.dataframe(df)
+
+fig = px.line(df, x="Matchday", y="Goals", title=f"Goals over the season {season}")
+st.plotly_chart(fig)
+
+fig_bar = px.bar(df, x="Statistic", y="Value", title="Player Stats")
+st.plotly_chart(fig_bar)
+
+stat_type = st.selectbox("Select stat type:", ["Goals", "Assists", "Minutes Played"])
+fig_stat = px.line(df, x="Matchday", y=stat_type, title=f"{stat_type} over the season")
+st.plotly_chart(fig_stat)
